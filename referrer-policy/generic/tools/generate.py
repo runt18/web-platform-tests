@@ -88,18 +88,18 @@ def generate_selection(selection, spec, subresource_path,
     if spec['referrer_policy'] != None:
         if selection['delivery_method'] == 'meta-referrer':
             selection['meta_delivery_method'] = \
-                '<meta name="referrer" content="%(referrer_policy)s">' % spec
+                '<meta name="referrer" content="{referrer_policy!s}">'.format(**spec)
         elif selection['delivery_method'] == 'meta-csp':
             selection['meta_delivery_method'] = \
                 '<meta http-equiv="Content-Security-Policy" ' + \
-                'content="referrer %(referrer_policy)s">' % spec
+                'content="referrer {referrer_policy!s}">'.format(**spec)
         elif selection['delivery_method'] == 'http-csp':
             selection['meta_delivery_method'] = \
                 "<!-- No meta: CSP delivered via HTTP headers. -->"
             test_headers_filename = test_filename + ".headers"
             with open(test_headers_filename, "w") as f:
                 f.write('Content-Security-Policy: ' + \
-                        'referrer %(referrer_policy)s\n' % spec)
+                        'referrer {referrer_policy!s}\n'.format(**spec))
                 # TODO(kristijanburnik): Limit to WPT origins.
                 f.write('Access-Control-Allow-Origin: *\n')
         elif selection['delivery_method'] == 'attr-referrer':
@@ -131,7 +131,7 @@ def generate_test_source_files(spec_json, target):
                 % {'spec_json': json.dumps(spec_json)})
 
     # Choose a debug/release template depending on the target.
-    html_template = "test.%s.html.template" % target
+    html_template = "test.{0!s}.html.template".format(target)
 
     # Create list of excluded tests.
     exclusion_dict = {}

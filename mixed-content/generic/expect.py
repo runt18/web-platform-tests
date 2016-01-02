@@ -45,7 +45,7 @@ def main(request, response):
             redirect(create_redirect_url(request, swap_scheme=True), response)
             return
         else:
-            raise ValueError ("Invalid redirect type: %s" % redirection)
+            raise ValueError ("Invalid redirect type: {0!s}".format(redirection))
 
     content_type = "text/plain"
     response_data = ""

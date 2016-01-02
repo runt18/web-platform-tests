@@ -97,7 +97,7 @@ def generate_selection(selection, spec, test_html_template_basename):
     elif opt_in_method == 'no-opt-in':
         pass
     else:
-        raise ValueError("Invalid opt_in_method %s" % opt_in_method)
+        raise ValueError("Invalid opt_in_method {0!s}".format(opt_in_method))
 
     # Write out the generated HTML file.
     write_file(test_filename, test_html_template % selection)
@@ -111,7 +111,7 @@ def generate_test_source_files(spec_json, target):
                spec_json_js_template % {'spec_json': json.dumps(spec_json)})
 
     # Choose a debug/release template depending on the target.
-    html_template = "test.%s.html.template" % target
+    html_template = "test.{0!s}.html.template".format(target)
 
     artifact_order = test_expansion_schema.keys() + ['name']
 

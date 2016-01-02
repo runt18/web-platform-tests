@@ -18,12 +18,12 @@ def main(request, response):
     if last_event_id == '':
         headers.append(("Content-Type", "text/event-stream"))
         response.set_cookie(ident, "COOKIE")
-        data = "id: 1\nretry: 200\ndata: first %s\n\n" % cookie
+        data = "id: 1\nretry: 200\ndata: first {0!s}\n\n".format(cookie)
     elif last_event_id == '1':
         headers.append(("Content-Type", "text/event-stream"))
         long_long_time_ago = datetime.now().replace(year=2001, month=7, day=27)
         response.set_cookie(ident, "COOKIE", expires=long_long_time_ago)
-        data = "id: 2\ndata: second %s\n\n" % cookie
+        data = "id: 2\ndata: second {0!s}\n\n".format(cookie)
     else:
         headers.append(("Content-Type", "stop"))
         data = "data: " + last_event_id + cookie + "\n\n";

@@ -7,7 +7,7 @@ def main(request, response):
 
     string = "W3C"
     for i in xrange(1000):
-        response.writer.write("%s\r\n%s\r\n" % (len(string), string))
+        response.writer.write("{0!s}\r\n{1!s}\r\n".format(len(string), string))
         response.writer.flush();
 
     response.writer.write("0\r\n\r\n")

@@ -8,7 +8,7 @@ def main(request, response):
         # We want the raw input for 'q'
         q = re.search(r'q=([^&]+)', request.url_parts.query).groups()[0]
         request.server.stash.put(key, q)
-        return [("Content-Type", "text/html")], 'Put %s' % q
+        return [("Content-Type", "text/html")], 'Put {0!s}'.format(q)
     else:
         q = request.server.stash.take(key)
         if q != None:

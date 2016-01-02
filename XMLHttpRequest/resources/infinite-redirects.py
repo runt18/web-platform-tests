@@ -1,5 +1,5 @@
 def main(request, response):
-    location = "%s://%s:%s/%s" % (request.url_parts.scheme,
+    location = "{0!s}://{1!s}:{2!s}/{3!s}".format(request.url_parts.scheme,
                                   request.url_parts.netloc,
                                   request.url_parts.port,
                                   request.url_parts.path)
@@ -16,7 +16,7 @@ def main(request, response):
         mix = 1
         type = 302 if type == 301 else 301
 
-    new_location = "%s?page=%s&type=%s&mix=%s" % (location, page, type, mix)
+    new_location = "{0!s}?page={1!s}&type={2!s}&mix={3!s}".format(location, page, type, mix)
     headers = [("Cache-Control", "no-cache"),
                ("Pragma", "no-cache"),
                ("Location", new_location)]

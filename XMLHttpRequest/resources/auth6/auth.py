@@ -8,6 +8,6 @@ def main(request, response):
         response.headers.set('WWW-Authenticate', 'Basic realm="test"')
         content = 'User name/password wrong or not given: '
 
-    content += "%s\n%s" % (request.auth.username,
+    content += "{0!s}\n{1!s}".format(request.auth.username,
                            request.auth.password)
     return content

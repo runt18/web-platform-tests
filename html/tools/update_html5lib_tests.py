@@ -54,7 +54,7 @@ def get_expected(data):
 def get_hash(data, container=None):
     if container == None:
         container = ""
-    return hashlib.sha1("#container%s#data%s"%(container.encode("utf8"),
+    return hashlib.sha1("#container{0!s}#data{1!s}".format(container.encode("utf8"),
                                                data.encode("utf8"))).hexdigest()
 
 def make_tests(script_dir, out_dir, input_file_name, test_data):
@@ -73,10 +73,10 @@ def make_tests(script_dir, out_dir, input_file_name, test_data):
         test_list = innerHTML_tests if is_innerHTML else tests
         test_id = get_hash(data, container)
         if test_id in ids_seen:
-            print "WARNING: id %s seen multiple times in file %s this time for test (%s, %s) before for test %s, skipping"%(test_id, input_file_name, container, data, ids_seen[test_id])
+            print "WARNING: id {0!s} seen multiple times in file {1!s} this time for test ({2!s}, {3!s}) before for test {4!s}, skipping".format(test_id, input_file_name, container, data, ids_seen[test_id])
             continue
         ids_seen[test_id] = (container, data)
-        test_list.append({'string_uri_encoded_input':"\"%s\""%urllib.quote(data.encode("utf8")),
+        test_list.append({'string_uri_encoded_input':"\"{0!s}\"".format(urllib.quote(data.encode("utf8"))),
                           'input':data,
                           'expected':expected,
                           'string_escaped_expected':json.dumps(urllib.quote(expected.encode("utf8"))),
@@ -86,12 +86,12 @@ def make_tests(script_dir, out_dir, input_file_name, test_data):
     path_normal = None
     if tests:
         path_normal = write_test_file(script_dir, out_dir,
-                                      tests, "html5lib_%s"%input_file_name,
+                                      tests, "html5lib_{0!s}".format(input_file_name),
                                       "html5lib_test.xml")
     path_innerHTML = None
     if innerHTML_tests:
         path_innerHTML = write_test_file(script_dir, out_dir,
-                                         innerHTML_tests, "html5lib_innerHTML_%s"%input_file_name,
+                                         innerHTML_tests, "html5lib_innerHTML_{0!s}".format(input_file_name),
                                          "html5lib_test_fragment.xml")
 
     return path_normal, path_innerHTML
@@ -114,7 +114,7 @@ def escape_js_string(in_data):
     return in_data.encode("utf8").encode("string-escape")
 
 def serialize_filenames(test_filenames):
-    return "[" + ",\n".join("\"%s\""%item for item in test_filenames) + "]"
+    return "[" + ",\n".join("\"{0!s}\"".format(item) for item in test_filenames) + "]"
 
 def main():
 

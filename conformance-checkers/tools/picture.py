@@ -347,18 +347,18 @@ non_errors = {
 
 for key in errors.keys():
     template_error = template
-    template_error += '<title>invalid %s</title>\n' % key
+    template_error += '<title>invalid {0!s}</title>\n'.format(key)
     template_error += errors[key]
-    file = open(os.path.join(ccdir, "html/elements/picture/%s-novalid.html" % key), 'wb')
+    file = open(os.path.join(ccdir, "html/elements/picture/{0!s}-novalid.html".format(key)), 'wb')
     file.write(template_error)
     file.close()
 
 file = open(os.path.join(ccdir, "html/elements/picture/picture-isvalid.html"), 'wb')
 file.write(template + '<title>valid picture</title>\n')
 for key in non_errors_in_head.keys():
-    file.write('%s <!-- %s -->\n' % (non_errors_in_head[key], key))
+    file.write('{0!s} <!-- {1!s} -->\n'.format(non_errors_in_head[key], key))
 file.write('<body>\n')
 for key in non_errors.keys():
-    file.write('%s <!-- %s -->\n' % (non_errors[key], key))
+    file.write('{0!s} <!-- {1!s} -->\n'.format(non_errors[key], key))
 file.close()
 # vim: ts=4:sw=4

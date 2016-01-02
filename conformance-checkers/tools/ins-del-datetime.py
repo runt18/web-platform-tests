@@ -137,14 +137,14 @@ for key in errors.keys():
     error = errors[key]
     template_ins = template
     template_del = template
-    template_ins += '<title>%s</title>\n' % key
-    template_del += '<title>%s</title>\n' % key
-    template_ins += '<ins datetime="%s"></ins>' % errors[key]
-    template_del += '<del datetime="%s"></del>' % errors[key]
-    ins_file = open(os.path.join(ccdir, "html/elements/ins/%s-novalid.html" % key), 'wb')
+    template_ins += '<title>{0!s}</title>\n'.format(key)
+    template_del += '<title>{0!s}</title>\n'.format(key)
+    template_ins += '<ins datetime="{0!s}"></ins>'.format(errors[key])
+    template_del += '<del datetime="{0!s}"></del>'.format(errors[key])
+    ins_file = open(os.path.join(ccdir, "html/elements/ins/{0!s}-novalid.html".format(key)), 'wb')
     ins_file.write(template_ins)
     ins_file.close()
-    del_file = open(os.path.join(ccdir, "html/elements/del/%s-novalid.html" % key), 'wb')
+    del_file = open(os.path.join(ccdir, "html/elements/del/{0!s}-novalid.html".format(key)), 'wb')
     del_file.write(template_del)
     del_file.close()
 
@@ -152,14 +152,14 @@ for key in warnings.keys():
     non_error = warnings[key]
     template_ins = template
     template_del = template
-    template_ins += '<title>%s</title>\n' % key
-    template_del += '<title>%s</title>\n' % key
-    template_ins += '<ins datetime="%s"></ins>' % warnings[key]
-    template_del += '<del datetime="%s"></del>' % warnings[key]
-    ins_file = open(os.path.join(ccdir, "html/elements/ins/%s-haswarn.html" % key), 'wb')
+    template_ins += '<title>{0!s}</title>\n'.format(key)
+    template_del += '<title>{0!s}</title>\n'.format(key)
+    template_ins += '<ins datetime="{0!s}"></ins>'.format(warnings[key])
+    template_del += '<del datetime="{0!s}"></del>'.format(warnings[key])
+    ins_file = open(os.path.join(ccdir, "html/elements/ins/{0!s}-haswarn.html".format(key)), 'wb')
     ins_file.write(template_ins)
     ins_file.close()
-    del_file = open(os.path.join(ccdir, "html/elements/del/%s-haswarn.html" % key), 'wb')
+    del_file = open(os.path.join(ccdir, "html/elements/del/{0!s}-haswarn.html".format(key)), 'wb')
     del_file.write(template_del)
     del_file.close()
 
@@ -169,8 +169,8 @@ ins_file.write(template + '<title>valid datetime</title>\n')
 del_file.write(template + '<title>valid datetime</title>\n')
 for key in non_errors.keys():
     non_error = non_errors[key]
-    ins_file.write('<ins datetime="%s"></ins> <!-- %s -->\n' % (non_errors[key], key))
-    del_file.write('<del datetime="%s"></del> <!-- %s -->\n' % (non_errors[key], key))
+    ins_file.write('<ins datetime="{0!s}"></ins> <!-- {1!s} -->\n'.format(non_errors[key], key))
+    del_file.write('<del datetime="{0!s}"></del> <!-- {1!s} -->\n'.format(non_errors[key], key))
 ins_file.close()
 del_file.close()
 # vim: ts=4:sw=4
