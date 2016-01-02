@@ -11,6 +11,6 @@ def main(request, response):
         return [("Content-Type", "text/html")], 'Put %s' % q
     else:
         q = request.server.stash.take(key)
-        if q != None:
+        if q is not None:
             return [("Content-Type", "text/html")], q
         return [], ""

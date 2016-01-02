@@ -4,7 +4,7 @@ def main(request, response):
     if "check" in request.GET:
         token = request.GET.first("token")
         value = request.server.stash.take(token)
-        if value == None:
+        if value is None:
             body = "0"
         else:
             if request.GET.first("check", None) == "keep":
