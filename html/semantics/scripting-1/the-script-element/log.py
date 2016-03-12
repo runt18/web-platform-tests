@@ -10,4 +10,4 @@ def main(request, response):
 
     time.sleep(int(delay))
 
-    return "log('%s')" % script_id
+    return "log('{0!s}')".format(script_id)

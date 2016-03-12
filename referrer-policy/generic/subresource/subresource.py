@@ -56,7 +56,7 @@ def preprocess_redirection(request, response):
     elif redirection == "swap-origin-redirect":
         redirect_url = create_redirect_url(request, cross_origin = True)
     else:
-        raise ValueError("Invalid redirection type '%s'" % redirection)
+        raise ValueError("Invalid redirection type '{0!s}'".format(redirection))
 
     redirect(redirect_url, response)
     return True

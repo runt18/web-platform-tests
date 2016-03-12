@@ -120,7 +120,7 @@ def expand_nonfinite(method, argstr, tail):
                 f(c2, i+1, depth+1)
     f(call, 0, 0)
 
-    return '\n'.join('%s(%s)%s' % (method, ', '.join(c), tail) for c in calls)
+    return '\n'.join('{0!s}({1!s}){2!s}'.format(method, ', '.join(c), tail) for c in calls)
 
 # Run with --test argument to run unit tests
 if len(sys.argv) > 1 and sys.argv[1] == '--test':
@@ -160,27 +160,27 @@ def backref_html(name):
     c = ''
     for p in name.split('.')[:-1]:
         c += '.'+p
-        backrefs.append('<a href="index%s.html">%s</a>.' % (c, p))
+        backrefs.append('<a href="index{0!s}.html">{1!s}</a>.'.format(c, p))
     backrefs.append(name.split('.')[-1])
     return ''.join(backrefs)
 
 def make_flat_image(filename, w, h, r,g,b,a):
-    if os.path.exists('%s/%s' % (IMAGEOUTPUTDIR, filename)):
+    if os.path.exists('{0!s}/{1!s}'.format(IMAGEOUTPUTDIR, filename)):
         return filename
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
     cr = cairo.Context(surface)
     cr.set_source_rgba(r, g, b, a)
     cr.rectangle(0, 0, w, h)
     cr.fill()
-    surface.write_to_png('%s/%s' % (IMAGEOUTPUTDIR, filename))
+    surface.write_to_png('{0!s}/{1!s}'.format(IMAGEOUTPUTDIR, filename))
     return filename
 
 # Ensure the test output directories exist
 testdirs = [TESTOUTPUTDIR, IMAGEOUTPUTDIR, MISCOUTPUTDIR]
-if not W3CMODE: testdirs.append('%s/mochitests' % MISCOUTPUTDIR)
+if not W3CMODE: testdirs.append('{0!s}/mochitests'.format(MISCOUTPUTDIR))
 else:
     for map_dir in set(name_mapping.values()):
-        testdirs.append("%s/%s" % (TESTOUTPUTDIR, map_dir))
+        testdirs.append("{0!s}/{1!s}".format(TESTOUTPUTDIR, map_dir))
 for d in testdirs:
     try: os.mkdir(d)
     except: pass # ignore if it already exists
@@ -216,23 +216,19 @@ def expand_test_code(code):
             code)
 
     code = re.sub(r'@assert (.*) === (.*);',
-            lambda m: '_assertSame(%s, %s, "%s", "%s");'
-                % (m.group(1), m.group(2), escapeJS(m.group(1)), escapeJS(m.group(2)))
+            lambda m: '_assertSame({0!s}, {1!s}, "{2!s}", "{3!s}");'.format(m.group(1), m.group(2), escapeJS(m.group(1)), escapeJS(m.group(2)))
             , code)
 
     code = re.sub(r'@assert (.*) !== (.*);',
-            lambda m: '_assertDifferent(%s, %s, "%s", "%s");'
-                % (m.group(1), m.group(2), escapeJS(m.group(1)), escapeJS(m.group(2)))
+            lambda m: '_assertDifferent({0!s}, {1!s}, "{2!s}", "{3!s}");'.format(m.group(1), m.group(2), escapeJS(m.group(1)), escapeJS(m.group(2)))
             , code)
 
     code = re.sub(r'@assert (.*) =~ (.*);',
-            lambda m: 'assert_regexp_match(%s, %s);'
-                % (m.group(1), m.group(2))
+            lambda m: 'assert_regexp_match({0!s}, {1!s});'.format(m.group(1), m.group(2))
             , code)
 
     code = re.sub(r'@assert (.*);',
-            lambda m: '_assert(%s, "%s");'
-                % (m.group(1), escapeJS(m.group(1)))
+            lambda m: '_assert({0!s}, "{1!s}");'.format(m.group(1), escapeJS(m.group(1)))
             , code)
 
     code = re.sub(r' @moz-todo', '', code)
@@ -261,38 +257,31 @@ def expand_mochitest_code(code):
         code)
 
     code = re.sub(r'@assert throws (\S+_ERR) (.*);',
-        lambda m: 'var _thrown = undefined; try {\n  %s;\n} catch (e) { _thrown = e }; ok(_thrown && _thrown.code == DOMException.%s, "should throw %s");'
-            % (m.group(2), m.group(1), m.group(1))
+        lambda m: 'var _thrown = undefined; try {{\n  {0!s};\n}} catch (e) {{ _thrown = e }}; ok(_thrown && _thrown.code == DOMException.{1!s}, "should throw {2!s}");'.format(m.group(2), m.group(1), m.group(1))
         , code)
 
     code = re.sub(r'@assert throws (\S+Error) (.*);',
-        lambda m: 'var _thrown = undefined; try {\n  %s;\n} catch (e) { _thrown = e }; ok(_thrown && (_thrown instanceof %s), "should throw %s");'
-            % (m.group(2), m.group(1), m.group(1))
+        lambda m: 'var _thrown = undefined; try {{\n  {0!s};\n}} catch (e) {{ _thrown = e }}; ok(_thrown && (_thrown instanceof {1!s}), "should throw {2!s}");'.format(m.group(2), m.group(1), m.group(1))
         , code)
 
     code = re.sub(r'@assert throws (.*);',
-        lambda m: 'try { var _thrown = false;\n  %s;\n} catch (e) { _thrown = true; } finally { ok(_thrown, "should throw exception"); }'
-            % (m.group(1))
+        lambda m: 'try {{ var _thrown = false;\n  {0!s};\n}} catch (e) {{ _thrown = true; }} finally {{ ok(_thrown, "should throw exception"); }}'.format((m.group(1)))
         , code)
 
     code = re.sub(r'@assert (.*) =~ (.*);',
-        lambda m: 'ok(%s.match(%s), "%s.match(%s)");'
-            % (m.group(1), m.group(2), escapeJS(m.group(1)), escapeJS(m.group(2)))
+        lambda m: 'ok({0!s}.match({1!s}), "{2!s}.match({3!s})");'.format(m.group(1), m.group(2), escapeJS(m.group(1)), escapeJS(m.group(2)))
         , code)
 
     code = re.sub(r'@assert (.*);',
-        lambda m: 'ok(%s, "%s");'
-            % (m.group(1), escapeJS(m.group(1)))
+        lambda m: 'ok({0!s}, "{1!s}");'.format(m.group(1), escapeJS(m.group(1)))
         , code)
 
     code = re.sub(r'((?:^|\n|;)\s*)ok(.*;) @moz-todo',
-        lambda m: '%stodo%s'
-            % (m.group(1), m.group(2))
+        lambda m: '{0!s}todo{1!s}'.format(m.group(1), m.group(2))
         , code)
 
     code = re.sub(r'((?:^|\n|;)\s*)(is.*;) @moz-todo',
-        lambda m: '%stodo_%s'
-            % (m.group(1), m.group(2))
+        lambda m: '{0!s}todo_{1!s}'.format(m.group(1), m.group(2))
         , code)
 
     code = re.sub(r'@moz-UniversalBrowserRead;',
@@ -301,7 +290,7 @@ def expand_mochitest_code(code):
 
     code = code.replace('../images/', 'image_')
 
-    assert '@' not in code, '@ not in code:\n%s' % code
+    assert '@' not in code, '@ not in code:\n{0!s}'.format(code)
 
     return code
 
@@ -310,19 +299,19 @@ for i in range(len(tests)):
     test = tests[i]
 
     name = test['name']
-    print "\r(%s)" % name, " "*32, "\t",
+    print "\r({0!s})".format(name), " "*32, "\t",
 
     if name in used_tests:
-        print "Test %s is defined twice" % name
+        print "Test {0!s} is defined twice".format(name)
     used_tests[name] = 1
 
     mapped_name = None
     for mn in sorted(name_mapping.keys(), key=len, reverse=True):
         if name.startswith(mn):
-            mapped_name = "%s/%s" % (name_mapping[mn], name)
+            mapped_name = "{0!s}/{1!s}".format(name_mapping[mn], name)
             break
     if not mapped_name:
-        print "LIKELY ERROR: %s has no defined target directory mapping" % name
+        print "LIKELY ERROR: {0!s} has no defined target directory mapping".format(name)
         mapped_name = name
     if 'manual' in test:
         mapped_name += "-manual"
@@ -336,14 +325,14 @@ for i in range(len(tests)):
 
     for ref in test.get('testing', []):
         if ref not in spec_ids:
-            print "Test %s uses nonexistent spec point %s" % (name, ref)
+            print "Test {0!s} uses nonexistent spec point {1!s}".format(name, ref)
         spec_refs.setdefault(ref, []).append(name)
     #if not (len(test.get('testing', [])) or 'mozilla' in test):
     if not test.get('testing', []):
-        print "Test %s doesn't refer to any spec points" % name
+        print "Test {0!s} doesn't refer to any spec points".format(name)
 
     if test.get('expected', '') == 'green' and re.search(r'@assert pixel .* 0,0,0,0;', test['code']):
-        print "Probable incorrect pixel test in %s" % name
+        print "Probable incorrect pixel test in {0!s}".format(name)
 
     code = expand_test_code(test['code'])
 
@@ -356,10 +345,10 @@ for i in range(len(tests)):
             if 'throws' in test['mozilla']:
                 mochi_code = templates['mochitest.exception'] % mochi_code
             if 'bug' in test['mozilla']:
-                mochi_name = "%s - bug %s" % (name, test['mozilla']['bug'])
+                mochi_name = "{0!s} - bug {1!s}".format(name, test['mozilla']['bug'])
 
         if 'desc' in test:
-            mochi_desc = '<!-- Testing: %s -->\n' % test['desc']
+            mochi_desc = '<!-- Testing: {0!s} -->\n'.format(test['desc'])
         else:
             mochi_desc = ''
 
@@ -372,10 +361,10 @@ for i in range(len(tests)):
 
         for f in ['isPixel', 'todo_isPixel', 'deferTest', 'wrapFunction']:
             if f in mochi_code:
-                mochi_setup += templates['mochitest.%s' % f]
+                mochi_setup += templates['mochitest.{0!s}'.format(f)]
     else:
         if not W3CMODE:
-            print "Skipping mochitest for %s" % name
+            print "Skipping mochitest for {0!s}".format(name)
         mochi_name = ''
         mochi_desc = ''
         mochi_code = ''
@@ -393,7 +382,7 @@ for i in range(len(tests)):
             expected_img = make_flat_image('clear-100x50.png', 100, 50, 0,0,0,0)
             if W3CMODE: expected_img = "/images/" + expected_img
         else:
-            if ';' in expected: print "Found semicolon in %s" % name
+            if ';' in expected: print "Found semicolon in {0!s}".format(name)
             expected = re.sub(r'^size (\d+) (\d+)',
                 r'surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, \1, \2)\ncr = cairo.Context(surface)',
                               expected)
@@ -402,13 +391,13 @@ for i in range(len(tests)):
                 png_name = mapped_name[:-len("-manual")]
             else:
                 png_name = mapped_name
-            expected += "\nsurface.write_to_png('%s/%s.png')\n" % (IMAGEOUTPUTDIR, png_name)
-            eval(compile(expected, '<test %s>' % test['name'], 'exec'), {}, {'cairo':cairo})
-            expected_img = "%s.png" % name
+            expected += "\nsurface.write_to_png('{0!s}/{1!s}.png')\n".format(IMAGEOUTPUTDIR, png_name)
+            eval(compile(expected, '<test {0!s}>'.format(test['name']), 'exec'), {}, {'cairo':cairo})
+            expected_img = "{0!s}.png".format(name)
 
         if expected_img:
             expectation_html = ('<p class="output expectedtext">Expected output:' +
-                '<p><img src="%s" class="output expected" id="expected" alt="">' % (expected_img))
+                '<p><img src="{0!s}" class="output expected" id="expected" alt="">'.format((expected_img)))
 
     canvas = test.get('canvas', 'width="100" height="50"')
 
@@ -417,31 +406,31 @@ for i in range(len(tests)):
 
     name_wrapped = name.replace('.', '.&#8203;') # (see https://bugzilla.mozilla.org/show_bug.cgi?id=376188)
 
-    refs = ''.join('<li><a href="%s/canvas.html#testrefs.%s">%s</a>\n' % (SPECOUTPUTPATH, n,n) for n in test.get('testing', []))
+    refs = ''.join('<li><a href="{0!s}/canvas.html#testrefs.{1!s}">{2!s}</a>\n'.format(SPECOUTPUTPATH, n, n) for n in test.get('testing', []))
     if not W3CMODE and 'mozilla' in test and 'bug' in test['mozilla']:
-        refs += '<li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=%d">Bugzilla</a>' % test['mozilla']['bug']
+        refs += '<li><a href="https://bugzilla.mozilla.org/show_bug.cgi?id={0:d}">Bugzilla</a>'.format(test['mozilla']['bug'])
 
-    notes = '<p class="notes">%s' % test['notes'] if 'notes' in test else ''
+    notes = '<p class="notes">{0!s}'.format(test['notes']) if 'notes' in test else ''
 
     images = ''
     for i in test.get('images', []):
         id = i.split('/')[-1]
         if '/' not in i:
             used_images[i] = 1
-            i = '../images/%s' % i
-        images += '<img src="%s" id="%s" class="resource">\n' % (i,id)
+            i = '../images/{0!s}'.format(i)
+        images += '<img src="{0!s}" id="{1!s}" class="resource">\n'.format(i, id)
     mochi_images = images.replace('../images/', 'image_')
     if W3CMODE: images = images.replace("../images/", "/images/")
 
     fonts = ''
     fonthack = ''
     for i in test.get('fonts', []):
-        fonts += '@font-face {\n  font-family: %s;\n  src: url("/fonts/%s.ttf");\n}\n' % (i, i)
+        fonts += '@font-face {{\n  font-family: {0!s};\n  src: url("/fonts/{1!s}.ttf");\n}}\n'.format(i, i)
         # Browsers require the font to actually be used in the page
         if test.get('fonthack', 1):
-            fonthack += '<span style="font-family: %s; position: absolute; visibility: hidden">A</span>\n' % i
+            fonthack += '<span style="font-family: {0!s}; position: absolute; visibility: hidden">A</span>\n'.format(i)
     if fonts:
-        fonts = '<style>\n%s</style>\n' % fonts
+        fonts = '<style>\n{0!s}</style>\n'.format(fonts)
 
     fallback = test.get('fallback', '<p class="fallback">FAIL (fallback content)</p>')
 
@@ -460,49 +449,49 @@ for i in range(len(tests)):
     }
 
     if W3CMODE:
-        f = codecs.open('%s/%s.html' % (TESTOUTPUTDIR, mapped_name), 'w', 'utf-8')
+        f = codecs.open('{0!s}/{1!s}.html'.format(TESTOUTPUTDIR, mapped_name), 'w', 'utf-8')
         f.write(templates['w3c'] % template_params)
     else:
-        f = codecs.open('%s/%s.html' % (TESTOUTPUTDIR, name), 'w', 'utf-8')
+        f = codecs.open('{0!s}/{1!s}.html'.format(TESTOUTPUTDIR, name), 'w', 'utf-8')
         f.write(templates['standalone'] % template_params)
 
-        f = codecs.open('%s/framed.%s.html' % (TESTOUTPUTDIR, name), 'w', 'utf-8')
+        f = codecs.open('{0!s}/framed.{1!s}.html'.format(TESTOUTPUTDIR, name), 'w', 'utf-8')
         f.write(templates['framed'] % template_params)
 
-        f = codecs.open('%s/minimal.%s.html' % (TESTOUTPUTDIR, name), 'w', 'utf-8')
+        f = codecs.open('{0!s}/minimal.{1!s}.html'.format(TESTOUTPUTDIR, name), 'w', 'utf-8')
         f.write(templates['minimal'] % template_params)
 
     if mochitest:
         mochitests.append(name)
-        f = codecs.open('%s/mochitests/test_%s.html' % (MISCOUTPUTDIR, name), 'w', 'utf-8')
+        f = codecs.open('{0!s}/mochitests/test_{1!s}.html'.format(MISCOUTPUTDIR, name), 'w', 'utf-8')
         f.write(templates['mochitest'] % template_params)
 
 def write_mochitest_makefile():
-    f = open('%s/mochitests/Makefile.in' % MISCOUTPUTDIR, 'w')
+    f = open('{0!s}/mochitests/Makefile.in'.format(MISCOUTPUTDIR), 'w')
     f.write(templates['mochitest.Makefile'])
-    files = ['test_%s.html' % n for n in mochitests] + ['image_%s' % n for n in used_images]
+    files = ['test_{0!s}.html'.format(n) for n in mochitests] + ['image_{0!s}'.format(n) for n in used_images]
     chunksize = 100
     chunks = []
     for i in range(0, len(files), chunksize):
         chunk = files[i:i+chunksize]
-        name = '_TEST_FILES_%d' % (i / chunksize)
+        name = '_TEST_FILES_{0:d}'.format((i / chunksize))
         chunks.append(name)
-        f.write('%s = \\\n' % name)
-        for file in chunk: f.write('\t%s \\\n' % file)
+        f.write('{0!s} = \\\n'.format(name))
+        for file in chunk: f.write('\t{0!s} \\\n'.format(file))
         f.write('\t$(NULL)\n\n')
     f.write('# split up into groups to work around command-line length limits\n')
     for name in chunks:
-        f.write('libs:: $(%s)\n\t$(INSTALL) $(foreach f,$^,"$f") $(DEPTH)/_tests/testing/mochitest/tests/$(relativesrcdir)\n\n' % name)
+        f.write('libs:: $({0!s})\n\t$(INSTALL) $(foreach f,$^,"$f") $(DEPTH)/_tests/testing/mochitest/tests/$(relativesrcdir)\n\n'.format(name))
 
 if not W3CMODE:
     for i in used_images:
-        shutil.copyfile("../../images/%s" % i, "%s/mochitests/image_%s" % (MISCOUTPUTDIR, i))
+        shutil.copyfile("../../images/{0!s}".format(i), "{0!s}/mochitests/image_{1!s}".format(MISCOUTPUTDIR, i))
     write_mochitest_makefile()
 
 print
 
 def write_index():
-    f = open('%s/index.html' % TESTOUTPUTDIR, 'w')
+    f = open('{0!s}/index.html'.format(TESTOUTPUTDIR), 'w')
     f.write(templates['index.w3c' if W3CMODE else 'index'] % { 'updated':time.strftime('%Y-%m-%d', time.gmtime()) })
     f.write('\n<ul class="testlist">\n')
     depth = 1
@@ -514,21 +503,21 @@ def write_index():
         f.write(' '*depth + templates['index.w3c.category.item' if W3CMODE else 'index.category.item'] % (name or 'all', name, count, '' if count==1 else 's'))
         while new_depth+1 > depth: f.write(' '*depth + '<ul>\n'); depth += 1
         for item in category_contents_direct.get(category, []):
-            f.write(' '*depth + '<li><a href="%s.html">%s</a>\n' % (item, item) )
+            f.write(' '*depth + '<li><a href="{0!s}.html">{1!s}</a>\n'.format(item, item) )
     while 0 < depth: f.write(' '*(depth-1) + '</ul>\n'); depth -= 1
 
 def write_category_indexes():
     for category in category_names:
         name = (category[1:-1] or 'all')
 
-        f = open('%s/index.%s.html' % (TESTOUTPUTDIR, name), 'w')
+        f = open('{0!s}/index.{1!s}.html'.format(TESTOUTPUTDIR, name), 'w')
         f.write(templates['index.w3c.frame' if W3CMODE else 'index.frame'] % { 'backrefs':backref_html(name), 'category':name })
         for item in category_contents_all[category]:
             f.write(templates['index.w3c.frame.item' if W3CMODE else 'index.frame.item'] % item)
 
 def write_reportgen():
-    f = open('%s/reportgen.html' % MISCOUTPUTDIR, 'w')
-    items_text = ',\n'.join(('"%s"' % item) for item in category_contents_all['.'])
+    f = open('{0!s}/reportgen.html'.format(MISCOUTPUTDIR), 'w')
+    items_text = ',\n'.join(('"{0!s}"'.format(item)) for item in category_contents_all['.'])
     f.write(templates['reportgen'] % {'items':items_text })
 
 def write_results():
@@ -537,7 +526,7 @@ def write_results():
     uastrings = {}
     for item in category_contents_all['.']: results[item] = {}
 
-    f = open('%s/results.html' % MISCOUTPUTDIR, 'w')
+    f = open('{0!s}/results.html'.format(MISCOUTPUTDIR), 'w')
     f.write(templates['results'])
 
     if not os.path.exists('results.yaml'):
@@ -554,7 +543,7 @@ def write_results():
                 assert uastrings[title] == resultset['ua']
             for r in resultset['results']:
                 if r['id'] not in results:
-                    print 'Skipping results for removed test %s' % r['id']
+                    print 'Skipping results for removed test {0!s}'.format(r['id'])
                     continue
                 results[r['id']][title] = (
                         r['status'].lower(),
@@ -565,20 +554,20 @@ def write_results():
 
     passes = {}
     for ua in uas:
-        f.write('<th title="%s">%s\n' % (uastrings[ua], ua))
+        f.write('<th title="{0!s}">{1!s}\n'.format(uastrings[ua], ua))
         passes[ua] = 0
     for id in category_contents_all['.']:
-        f.write('<tr><td><a href="#%s" id="%s">#</a> <a href="%s.html">%s</a>\n' % (id, id, id, id))
+        f.write('<tr><td><a href="#{0!s}" id="{1!s}">#</a> <a href="{2!s}.html">{3!s}</a>\n'.format(id, id, id, id))
         for ua in uas:
             status, details = results[id].get(ua, ('', ''))
-            f.write('<td class="r %s"><ul class="d">%s</ul>\n' % (status, details))
+            f.write('<td class="r {0!s}"><ul class="d">{1!s}</ul>\n'.format(status, details))
             if status == 'pass': passes[ua] += 1
     f.write('<tr><th>Passes\n')
     for ua in uas:
-        f.write('<td>%.1f%%\n' % ((100.0 * passes[ua]) / len(category_contents_all['.'])))
+        f.write('<td>{0:.1f}%\n'.format(((100.0 * passes[ua]) / len(category_contents_all['.']))))
     f.write('<tr><td>\n')
     for ua in uas:
-        f.write('<td>%s\n' % ua)
+        f.write('<td>{0!s}\n'.format(ua))
     f.write('</table>\n')
 
 def getNodeText(node):
@@ -608,12 +597,12 @@ def htmlSerializer(element):
 
     def serializeElement(element):
         if element.nodeType == Node.DOCUMENT_TYPE_NODE:
-            rv.append("<!DOCTYPE %s>" % element.name)
+            rv.append("<!DOCTYPE {0!s}>".format(element.name))
         elif element.nodeType == Node.DOCUMENT_NODE:
             for child in element.childNodes:
                 serializeElement(child)
         elif element.nodeType == Node.COMMENT_NODE:
-            rv.append("<!--%s-->" % element.nodeValue)
+            rv.append("<!--{0!s}-->".format(element.nodeValue))
         elif element.nodeType == Node.TEXT_NODE:
             unescaped = False
             n = element.parentNode
@@ -627,15 +616,15 @@ def htmlSerializer(element):
             else:
                 rv.append(escapeHTML(element.nodeValue))
         else:
-            rv.append("<%s" % element.nodeName)
+            rv.append("<{0!s}".format(element.nodeName))
             if element.hasAttributes():
                 for name, value in element.attributes.items():
-                    rv.append(' %s="%s"' % (name, escapeHTML(value)))
+                    rv.append(' {0!s}="{1!s}"'.format(name, escapeHTML(value)))
             rv.append(">")
             if element.nodeName not in empty:
                 for child in element.childNodes:
                     serializeElement(child)
-                rv.append("</%s>" % element.nodeName)
+                rv.append("</{0!s}>".format(element.nodeName))
     serializeElement(element)
     return '<!DOCTYPE html>\n' + ''.join(rv)
 
@@ -653,7 +642,7 @@ def write_annotated_spec():
     for a in spec_assertions:
         # Warn about problems
         if a['id'] not in spec_refs:
-            print "Unused spec statement %s" % a['id']
+            print "Unused spec statement {0!s}".format(a['id'])
 
         pattern_text = a['text']
 
@@ -664,13 +653,13 @@ def write_annotated_spec():
             # Extract the marked keywords, and remove the markers
             keyword = 'none'
             for kw in ['must', 'should', 'required']:
-                if ('*%s*' % kw) in pattern_text:
+                if ('*{0!s}*'.format(kw)) in pattern_text:
                     keyword = kw
-                    pattern_text = pattern_text.replace('*%s*' % kw, kw)
+                    pattern_text = pattern_text.replace('*{0!s}*'.format(kw), kw)
                     break
         # Make sure there wasn't >1 keyword
         for kw in ['must', 'should', 'required']:
-            assert('*%s*' % kw not in pattern_text)
+            assert('*{0!s}*'.format(kw) not in pattern_text)
 
         # Convert the special pattern format into regexp syntax
         pattern_text = (pattern_text.
@@ -718,11 +707,11 @@ def write_annotated_spec():
                         continue # discard this match
 
                 if id in matched_assertions:
-                    print "Spec statement %s matches multiple places" % id
+                    print "Spec statement {0!s} matches multiple places".format(id)
                 matched_assertions[id] = True
 
                 if m.lastindex != 1:
-                    print "Spec statement %s has incorrect number of match groups" % id
+                    print "Spec statement {0!s} has incorrect number of match groups".format(id)
 
                 end = m.end(1)
                 end_node = None
@@ -733,19 +722,19 @@ def write_annotated_spec():
                 assert(end_node)
 
                 n1 = doc.createElement('span')
-                n1.setAttribute('class', 'testrefs kw-%s' % keyword)
-                n1.setAttribute('id', 'testrefs.%s' % id)
+                n1.setAttribute('class', 'testrefs kw-{0!s}'.format(keyword))
+                n1.setAttribute('id', 'testrefs.{0!s}'.format(id))
                 n1.appendChild(doc.createTextNode(' '))
 
                 n = n1.appendChild(doc.createElement('a'))
-                n.setAttribute('href', '#testrefs.%s' % id)
+                n.setAttribute('href', '#testrefs.{0!s}'.format(id))
                 n.setAttribute('title', id)
                 n.appendChild(doc.createTextNode('#'))
 
                 n1.appendChild(doc.createTextNode(' '))
                 for test_id in spec_refs.get(id, []):
                     n = n1.appendChild(doc.createElement('a'))
-                    n.setAttribute('href', '../canvas/%s.html' % test_id)
+                    n.setAttribute('href', '../canvas/{0!s}.html'.format(test_id))
                     n.appendChild(doc.createTextNode(test_id))
                     n1.appendChild(doc.createTextNode(' '))
                 n0 = doc.createTextNode(end_node.nodeValue[:end])
@@ -763,7 +752,7 @@ def write_annotated_spec():
 
     for s in spec_assertions:
         if s['id'] not in matched_assertions:
-            print "Annotation incomplete: Unmatched spec statement %s" % s['id']
+            print "Annotation incomplete: Unmatched spec statement {0!s}".format(s['id'])
 
     # Convert from XHTML back to HTML
     doc.documentElement.removeAttribute('xmlns')
@@ -772,7 +761,7 @@ def write_annotated_spec():
     head = doc.documentElement.getElementsByTagName('head')[0]
     head.insertBefore(doc.createElement('meta'), head.firstChild).setAttribute('charset', 'UTF-8')
 
-    f = codecs.open('%s/canvas.html' % SPECOUTPUTDIR, 'w', 'utf-8')
+    f = codecs.open('{0!s}/canvas.html'.format(SPECOUTPUTDIR), 'w', 'utf-8')
     f.write(htmlSerializer(doc))
 
 if not W3CMODE:

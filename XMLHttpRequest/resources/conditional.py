@@ -4,7 +4,7 @@ def main(request, response):
     date = request.GET.first("date", "")
     modified = request.headers.get("If-Modified-Since", None)
     if tag:
-        response.headers.set("ETag", '"%s"' % tag)
+        response.headers.set("ETag", '"{0!s}"'.format(tag))
     elif date:
         response.headers.set("Last-Modified", date)
 

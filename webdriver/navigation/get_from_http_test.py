@@ -47,7 +47,7 @@ class GetFromHttpTest(base_test.WebDriverBaseTest):
 
     def testGetFragmentInCurrentDocumentDoesNotReloadPage(self):
         page = self.webserver.where_is("navigation/res/fragment.html")
-        fragment_page = "%s#%s" % (page, "fragment")
+        fragment_page = "{0!s}#{1!s}".format(page, "fragment")
 
         self.driver.get(page)
         self.driver.execute_script("state = true")

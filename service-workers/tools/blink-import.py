@@ -27,7 +27,7 @@ testharness_helpers_re = re.compile("\.\./((?:\.\./)*)resources/testharness-help
 
 def testharness_helpers(line, depth):
     if abs_testharness_helpers_re.findall(line):
-        return False, abs_testharness_helpers_re.sub(r"\1%sresources/testharness-helpers.js" % ("../" * (depth - 1)), line)
+        return False, abs_testharness_helpers_re.sub(r"\1{0!s}resources/testharness-helpers.js".format(("../" * (depth - 1))), line)
     return False, testharness_helpers_re.sub(r"\1resources/testharness-helpers.js", line)
 
 serviceworker_path_re = re.compile("/serviceworker/")
@@ -75,7 +75,7 @@ def get_head(git):
     return git("rev-parse", "HEAD")
 
 def get_changes(git, path, old, new):
-    data = git("diff", "--name-status", "-z", "--no-renames", "%s..%s" % (old, new), "--", path)
+    data = git("diff", "--name-status", "-z", "--no-renames", "{0!s}..{1!s}".format(old, new), "--", path)
     items = data.split("\0")
     rv = defaultdict(list)
     for status, path in items:
@@ -119,7 +119,7 @@ def is_top_level_test(path, data):
 
 def add_suffix(path, suffix):
     root, ext = os.path.splitext(path)
-    return root + ".%s" % suffix + ext
+    return root + ".{0!s}".format(suffix) + ext
 
 def main():
     if "--cache-tests" in sys.argv:

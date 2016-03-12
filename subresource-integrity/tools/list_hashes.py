@@ -23,35 +23,35 @@ def format_digest(digest):
 Generate an encoded sha512 URI.
 '''
 def sha512_uri(content):
-  return "sha512-%s" % format_digest(sha512(content).digest())
+  return "sha512-{0!s}".format(format_digest(sha512(content).digest()))
 
 '''
 Generate an encoded sha384 URI.
 '''
 def sha384_uri(content):
-  return "sha384-%s" % format_digest(sha384(content).digest())
+  return "sha384-{0!s}".format(format_digest(sha384(content).digest()))
 
 '''
 Generate an encoded sha256 URI.
 '''
 def sha256_uri(content):
-  return "sha256-%s" % format_digest(sha256(content).digest())
+  return "sha256-{0!s}".format(format_digest(sha256(content).digest()))
 
 '''
 Generate an encoded md5 digest URI.
 '''
 def md5_uri(content):
-  return "md5-%s" % format_digest(md5(content).digest())
+  return "md5-{0!s}".format(format_digest(md5(content).digest()))
 
 def main():
   for file in js_and_css_files():
-    print "Listing hash values for %s" % file
+    print "Listing hash values for {0!s}".format(file)
     with open(file, "r") as content_file:
       content = content_file.read()
-      print "\tSHA512 integrity: %s" % sha512_uri(content)
-      print "\tSHA384 integrity: %s" % sha384_uri(content)
-      print "\tSHA256 integrity: %s" % sha256_uri(content)
-      print "\tMD5 integrity:    %s" % md5_uri(content)
+      print "\tSHA512 integrity: {0!s}".format(sha512_uri(content))
+      print "\tSHA384 integrity: {0!s}".format(sha384_uri(content))
+      print "\tSHA256 integrity: {0!s}".format(sha256_uri(content))
+      print "\tMD5 integrity:    {0!s}".format(md5_uri(content))
 
 if __name__ == "__main__":
   main()
