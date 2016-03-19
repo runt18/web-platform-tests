@@ -8,7 +8,7 @@ def main(request, response):
     response.writer.write_status(200)
     response.writer.write_header("x-content-type-options", "nosniff")
     response.writer.write_header("content-length", len(content))
-    if(type != None):
+    if(type is not None):
       response.writer.write_header("content-type", type)
     response.writer.end_headers()
 

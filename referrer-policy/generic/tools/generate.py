@@ -85,7 +85,7 @@ def generate_selection(selection, spec, subresource_path,
 
     selection['meta_delivery_method'] = ''
 
-    if spec['referrer_policy'] != None:
+    if spec['referrer_policy'] is not None:
         if selection['delivery_method'] == 'meta-referrer':
             selection['meta_delivery_method'] = \
                 '<meta name="referrer" content="{referrer_policy!s}">'.format(**spec)
