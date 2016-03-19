@@ -79,7 +79,7 @@ def respond(request,
     response.add_required_headers = False
     response.writer.write_status(status_code)
 
-    if access_control_allow_origin != None:
+    if access_control_allow_origin is not None:
         response.writer.write_header("access-control-allow-origin",
                                      access_control_allow_origin)
     response.writer.write_header("content-type", content_type)
