@@ -52,7 +52,7 @@ def get_expected(data):
     return data
 
 def get_hash(data, container=None):
-    if container == None:
+    if container is None:
         container = ""
     return hashlib.sha1("#container{0!s}#data{1!s}".format(container.encode("utf8"),
                                                data.encode("utf8"))).hexdigest()
